@@ -46,8 +46,9 @@ class TaskViewModel(
                 is TaskAction.DeleteTask -> deleteTaskUseCase(action.taskId)
                 is TaskAction.UpdateTaskStatus -> {
                     if (action.isDone) {
-                        taskForDeletionJobMap[action.taskId] = this.coroutineContext.job
-                        completeTaskUseCase(action.taskId)
+                        taskForDeletionJobMap[action.taskId] = launch {
+                            completeTaskUseCase(action.taskId)
+                        }
                     } else {
                         taskForDeletionJobMap[action.taskId]?.cancel()
                         incompleteTaskUseCase(action.taskId)
